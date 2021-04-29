@@ -1,0 +1,79 @@
+---
+
+- name: Test Server Setup
+  become: true
+  hosts: all
+
+  tasks:
+    - name: Installing Common packages
+      apt:
+        pkg:
+          - neovim
+          - tmux
+          - htop
+          - jq
+          - aptitude
+          - git
+
+    - name: Set timezone to Europe/Rome
+      timezone:
+        name: Europe/Madrid
+
+          
+    - name: Install the graphics tools
+      apt:
+        pkg:
+          - xubuntu-desktop
+          - chromium-browser
+          - terminator
+
+    - name: Install Docker Dependecies
+      apt:
+        pkg:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - software-properties-common
+          - python3-pip
+          - virtualenv
+          - python3-setuptools
+
+    - name: Add Docker GPG apt Key
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+
+    - name: Add Docker Repository
+      apt_repository:
+        repo: deb https://download.docker.com/linux/ubuntu bionic stable
+        state: present
+
+    - name: Install Docker CE
+      apt:
+          pkg: docker-ce
+          update_cache: yes
+
+    - name: Install Docker Module for Python
+      pip:
+        name: docker
+
+    - name: Install docker-compose
+      get_url: 
+        url : https://github.com/docker/compose/releases/download/1.29.1/docker-compose-Linux-x86_64
+        dest: /usr/local/bin/docker-compose
+        mode: 'u+x,g+x'
+
+    - name: Install the common-tools repo
+      git:
+        repo: 'https://github.com/theclash8/abb-test.git'
+        dest: /opt/repos/abb-test/
+
+    - name: Install the Grafana + InfluxDB stack
+      git:
+        repo: 'https://github.com/nicolargo/docker-influxdb-grafana.git'
+        dest: /opt/repos/docker-influxdb/grafana
+
+    - name: Start the Grafana + InfluxDB stack
+      shell: /usr/local/bin/docker-compose -f /opt/repos/docker-influxdb/grafana/docker-compose.yml up -d
+      register: output
+
