@@ -20,9 +20,9 @@ bash script located in scripts/check.sh
 The problem could be found in:
 
 * the routing table: the network 10.2.3.0 may not be correctly routed through the VPN
-* the /32 network specified is not a network but a single host (that should be /24 o a bigger one
-* the database port could not be exposed to the network. You can use a SSH tunnel as a workaround if the SSH server is available
-* The VPN is routed and the VPN server can't forward the traffic from the VPN through the internal network
+* the /32 network specified is not a network but a single host (that should be /24 o a bigger one)
+* the database port could not be exposed to the network. You can use a SSH tunnel as a workaround (ssh -L) if the SSH server is available
+* The VPN is routed and the VPN server can't forward the traffic from the VPN through the internal network (ip_forward disabled or firewall deny)
 * There is an authentication error. The authentication on many dbs is based on user/pass/ip so, if the VPN is routed you should grant the IP of the VPN server instead of the range of the VPN.
 
 Diagnose:
